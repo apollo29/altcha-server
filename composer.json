@@ -1,0 +1,24 @@
+{
+    "name": "altcha-org/altcha-starter-php",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "AltchaOrg\\AltchaStarterPhp\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Daniel Regeci",
+            "email": "536331+ovx@users.noreply.github.com"
+        }
+    ],
+    "require": {
+        "slim/slim": "^4.0",
+        "slim/psr7": "^1.7",
+        "nyholm/psr7": "^1.8",
+        "altcha-org/altcha": "^0.1",
+        "vlucas/phpdotenv": "^5.6",
+        "selective/basepath": "^2.2"
+    }
+}
