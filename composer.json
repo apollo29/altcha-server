@@ -1,12 +1,8 @@
 {
-    "name": "altcha-org/altcha-starter-php",
+    "name": "apollo29/altcha-server",
+    "description": "Selbst gehosteter ALTCHA-Challenge-Server für das Redaxo-Modul M20 (Formular).",
     "type": "project",
     "license": "MIT",
-    "autoload": {
-        "psr-4": {
-            "AltchaOrg\\AltchaStarterPhp\\": "src/"
-        }
-    },
     "authors": [
         {
             "name": "Daniel Regeci",
@@ -14,11 +10,24 @@
         }
     ],
     "require": {
+        "php": ">=8.2",
+        "ext-json": "*",
+        "altcha-org/altcha": "^1.3.3",
+        "selective/basepath": "^2.2",
         "slim/slim": "^4.0",
         "slim/psr7": "^1.7",
-        "nyholm/psr7": "^1.8",
-        "altcha-org/altcha": "^0.1",
-        "vlucas/phpdotenv": "^5.6",
-        "selective/basepath": "^2.2"
+        "vlucas/phpdotenv": "^5.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "AltchaOrg\\AltchaStarterPhp\\": "src/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "scripts": {
+        "start": "php -S localhost:3000 -t public",
+        "selftest": "php bin/selftest.php"
     }
 }
