@@ -248,6 +248,10 @@ Die eine Frage, die es klärt:
 curl -i https://altcha.fclaenggasse.ch/challenge
 ```
 
+> **Unter Windows in PowerShell** heisst der Befehl `curl.exe -i …` – mit Endung. Ohne sie
+> greift ein Alias auf `Invoke-WebRequest`, der `-i` als Dateinamen liest und mit
+> «Ein Laufwerk mit dem Namen "https" ist nicht vorhanden» abbricht.
+
 Ordnen Sie die Antwort zu:
 
 | Was zurückkommt | Was los ist |
