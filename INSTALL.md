@@ -219,6 +219,9 @@ Ein Testformular abschicken – kommt die Erfolgsmeldung, steht alles.
 
 | Symptom | Ursache | Abhilfe |
 |---|---|---|
+| Widget meldet `Expected application/json, received text/html` | Die Anfrage erreicht die Anwendung nicht – siehe eigener Abschnitt unten | |
+| `{"error":"Die Abhängigkeiten fehlen…"}` | `composer install` wurde nie ausgeführt | Schritt 3 nachholen |
+| `{"error":"Dieser Dienst braucht PHP 8.2 oder neuer…"}` | Die Domain läuft auf einer älteren PHP-Version | Beim Hoster umstellen |
 | `{"error":"ALTCHA_HMAC_KEY ist nicht gesetzt…"}` | `.env` fehlt, liegt am falschen Ort oder ist nicht lesbar | Die Datei gehört ins **Projektwurzelverzeichnis**, nicht nach `public/` |
 | `{"error":"ALTCHA_HMAC_KEY ist zu kurz…"}` | Schlüssel unter 32 Zeichen | `openssl rand -hex 32` |
 | `404` auf `/challenge` | `mod_rewrite` fehlt, `AllowOverride` verbietet `.htaccess`, oder Unterverzeichnis ohne `ALTCHA_BASE_PATH` | siehe Schritt 2 und 5 |
@@ -228,6 +231,35 @@ Ein Testformular abschicken – kommt die Erfolgsmeldung, steht alles.
 | `500` ohne Text | PHP-Fehler | vorübergehend `ALTCHA_DEBUG=true` setzen, Meldung lesen, danach **wieder abschalten** |
 
 Zur Fehlersuche hilft fast immer:
+
+```sh
+php bin/selftest.php https://altcha.fclaenggasse.ch/challenge
+```
+
+### «Expected application/json, received text/html»
+
+Diese Meldung des Widgets heisst: Statt der Challenge kam eine HTML-Seite zurück. Der
+Dienst selbst antwortet **immer** mit JSON, auch auf Fehler – die Anfrage hat ihn also
+gar nicht erreicht, oder PHP ist vorher gescheitert.
+
+Die eine Frage, die es klärt:
+
+```sh
+curl -i https://altcha.fclaenggasse.ch/challenge
+```
+
+Ordnen Sie die Antwort zu:
+
+| Was zurückkommt | Was los ist |
+|---|---|
+| `Content-Type: application/json` und eine Challenge | Der Dienst ist in Ordnung. Dann stimmt die **Challenge-URL in M20** nicht mit der geprüften überein – Tippfehler, fehlendes `/challenge`, `http` statt `https`. |
+| `301`/`302` auf eine andere Adresse | Das Widget folgt der Weiterleitung und landet auf einer HTML-Seite. Tragen Sie in M20 die **Zieladresse** ein, also mit/ohne `www` genau so, wie der Server sie haben will. |
+| `404` mit HTML | Unter dieser Adresse liegt der Dienst nicht. Es antwortet der Webserver oder Redaxo. → Schritt 2 und 5: Document Root, `mod_rewrite`, `AllowOverride All`; im Unterverzeichnis zusätzlich `ALTCHA_BASE_PATH`. |
+| `500` mit HTML | PHP bricht ab, bevor die Anwendung steht – meist eine fehlende Erweiterung. Fehlerprotokoll des Webservers lesen, notfalls `ALTCHA_DEBUG=true`. |
+| Ein Verzeichnislisting oder die Startseite der Hauptdomain | Der Document Root zeigt nicht auf `public/`. → Schritt 2 |
+| `{"error":"…"}` | Der Dienst läuft und sagt, was ihm fehlt – die Meldung nennt den Grund, siehe Tabelle oben. |
+
+Der Selbsttest nimmt Ihnen diese Zuordnung ab und prüft gleich weiter:
 
 ```sh
 php bin/selftest.php https://altcha.fclaenggasse.ch/challenge
