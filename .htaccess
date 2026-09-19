@@ -1,3 +1,18 @@
+# Die Anwendung liegt in public/; alles andere gehört nicht ins Web.
 RewriteEngine on
 RewriteRule ^$ public/ [L]
 RewriteRule (.*) public/$1 [L]
+
+# Falls die Umschreibung einmal nicht greift: Schlüssel und Bibliotheken
+# bleiben trotzdem unerreichbar.
+<FilesMatch "^\.env">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+RedirectMatch 404 ^/(vendor|src|bin)/
